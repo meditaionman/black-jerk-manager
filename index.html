@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BLACK JERKの販売・粗利益を確認する経営管理画面" />
+    <title>BLACK JERK | 経営管理</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <div><p class="eyebrow">BLACK JERK</p><h1>経営管理</h1><p class="lead">販売価格・原価・数量を入力すると、収益がすぐに更新されます。</p></div>
+        <button id="reset" class="reset" type="button">初期値に戻す</button>
+      </header>
+      <section class="summary-grid" aria-label="収益サマリー">
+        <article class="summary-card"><p>売上</p><strong id="total-sales">¥0</strong><span id="sold-count">0 食</span></article>
+        <article class="summary-card featured"><p>粗利益</p><strong id="total-gross-profit">¥0</strong><span>売上 − 食材原価</span></article>
+        <article class="summary-card"><p>粗利益率</p><strong id="gross-margin-rate">0.0%</strong><span>粗利益 ÷ 売上</span></article>
+      </section>
+      <section class="panel" aria-labelledby="products-heading">
+        <div class="panel-header"><div><p class="eyebrow">PRODUCTS</p><h2 id="products-heading">商品別の販売計画</h2></div><p>金額は税込・円単位</p></div>
+        <div class="table-wrap"><table><thead><tr><th scope="col">商品</th><th scope="col">販売価格</th><th scope="col">食材原価</th><th scope="col">販売数量</th><th scope="col">売上</th><th scope="col">粗利益</th></tr></thead><tbody id="product-rows"></tbody></table></div>
+      </section>
+      <p class="note">入力内容はこの画面の表示中のみ保持されます。</p>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
