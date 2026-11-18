@@ -1,8 +1,10 @@
 export const initialProducts = [
-  { id: "plate", name: "BLACK JERK プレート", category: "プレート", price: 1300, cost: 480, quantity: 45 },
-  { id: "half", name: "BLACK JERK ハーフ", category: "ハーフ", price: 800, cost: 290, quantity: 32 },
-  { id: "drink", name: "ドリンク", category: "ドリンク", price: 450, cost: 110, quantity: 58 }
+  { id: "plate", name: "BLACK JERK プレート", category: "プレート", price: 1300, meatPieces: 2, meatPacks: 15, otherCost: 12600, quantity: 45 },
+  { id: "half", name: "BLACK JERK ハーフ", category: "ハーフ", price: 800, meatPieces: 2, meatPacks: 8, otherCost: 4480, quantity: 32 },
+  { id: "drink", name: "ドリンク", category: "ドリンク", price: 450, meatPieces: 2, meatPacks: 0, otherCost: 6380, quantity: 58 }
 ];
+
+export const meatPackPrices = { 2: 600, 3: 900 };
 
 export function toNumber(value) {
   const number = Number(value);
@@ -11,11 +13,15 @@ export function toNumber(value) {
 
 export function calculateProduct(product) {
   const price = toNumber(product.price);
-  const cost = toNumber(product.cost);
   const quantity = toNumber(product.quantity);
+  const meatPieces = Number(product.meatPieces) === 3 ? 3 : 2;
+  const meatPacks = toNumber(product.meatPacks);
+  const otherCost = toNumber(product.otherCost);
+  const meatCost = meatPackPrices[meatPieces] * meatPacks;
+  const cost = meatCost + otherCost;
   const sales = price * quantity;
-  const grossProfit = (price - cost) * quantity;
-  return { ...product, price, cost, quantity, sales, grossProfit };
+  const grossProfit = sales - cost;
+  return { ...product, price, quantity, meatPieces, meatPacks, otherCost, meatCost, cost, sales, grossProfit };
 }
 
 export function calculateSummary(products) {
