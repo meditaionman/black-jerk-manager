@@ -27,6 +27,13 @@ test("ジャーク以外は入力した原価をそのまま使い、肉原価�
   assert.equal(product.grossProfit, 10500);
 });
 
+test("その日やらない商品は売上と粗利益の計算対象外になる", () => {
+  const product = calculateProduct({ kind: "standard", active: false, price: 700, cost: 10500, quantity: 30 });
+  assert.equal(product.sales, 0);
+  assert.equal(product.grossProfit, 0);
+  assert.deepEqual(calculateSummary([product]), { sales: 0, grossProfit: 0, marginRate: 0 });
+});
+
 test("不正な入力値はゼロとして扱う", () => {
   assert.equal(toNumber(-1), 0);
   assert.equal(toNumber("abc"), 0);
