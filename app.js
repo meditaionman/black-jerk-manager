@@ -29,8 +29,8 @@ function productRow(product) {
   const calculated = calculateProduct(product);
   const costEditor = calculated.kind === "jerk" ? jerkCostEditor(calculated) : standardCostEditor(calculated);
   return `
-    <tr data-id="${calculated.id}">
-      <th scope="row"><span class="category">${calculated.category}</span><label class="sr-only" for="name-${calculated.id}">${calculated.category}の商品名</label><input class="name-input" id="name-${calculated.id}" data-id="${calculated.id}" data-field="name" type="text" value="${calculated.name}"></th>
+    <tr data-id="${calculated.id}" class="${calculated.active ? "" : "is-inactive"}">
+      <th scope="row"><span class="category">${calculated.category}</span><label class="active-toggle"><input data-id="${calculated.id}" data-field="active" type="checkbox" ${calculated.active ? "checked" : ""}><span>その日やる</span></label><label class="sr-only" for="name-${calculated.id}">${calculated.category}の商品名</label><input class="name-input" id="name-${calculated.id}" data-id="${calculated.id}" data-field="name" type="text" value="${calculated.name}"></th>
       <td data-label="販売価格"><label class="sr-only" for="price-${calculated.id}">${calculated.name}の販売価格</label><div class="input-wrap"><span>¥</span><input id="price-${calculated.id}" data-id="${calculated.id}" data-field="price" type="number" min="0" step="10" inputmode="numeric" value="${calculated.price}"></div></td>
       <td data-label="原価" class="cost-cell">${costEditor}</td>
       <td data-label="販売数量"><label class="sr-only" for="quantity-${calculated.id}">${calculated.name}の販売数量</label><div class="input-wrap quantity"><input id="quantity-${calculated.id}" data-id="${calculated.id}" data-field="quantity" type="number" min="0" step="1" inputmode="numeric" value="${calculated.quantity}"><span>食</span></div></td>
@@ -44,7 +44,7 @@ function renderSummary() {
   summary.sales.textContent = yen.format(totals.sales);
   summary.grossProfit.textContent = yen.format(totals.grossProfit);
   summary.marginRate.textContent = `${totals.marginRate.toFixed(1)}%`;
-  document.querySelector("#sold-count").textContent = `${number.format(products.reduce((total, product) => total + toNumber(product.quantity), 0))} 食`;
+  document.querySelector("#sold-count").textContent = `${number.format(products.reduce((total, product) => total + (product.active !== false ? toNumber(product.quantity) : 0), 0))} 食`;
 }
 
 function render() {
@@ -57,7 +57,7 @@ function updateProduct(event) {
   if (!(input instanceof HTMLInputElement)) return;
   const product = products.find(({ id }) => id === input.dataset.id);
   if (!product || !input.dataset.field) return;
-  product[input.dataset.field] = input.dataset.field === "name" ? input.value : toNumber(input.value);
+  product[input.dataset.field] = input.dataset.field === "active" ? input.checked : input.dataset.field === "name" ? input.value : toNumber(input.value);
   const calculated = calculateProduct(product);
   const row = tableBody.querySelector(`tr[data-id="${product.id}"]`);
   const meatCost = row.querySelector(".meat-cost");
@@ -66,6 +66,7 @@ function updateProduct(event) {
   if (foodCost) foodCost.textContent = yen.format(calculated.cost);
   row.querySelector(".sales").textContent = yen.format(calculated.sales);
   row.querySelector(".gross-profit").textContent = yen.format(calculated.grossProfit);
+  row.classList.toggle("is-inactive", !calculated.active);
   renderSummary();
 }
 
